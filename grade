@@ -1,0 +1,520 @@
+<?php
+$link = mysqli_connect("localhost", "root", "");
+// Check connection
+if($link === false){
+die("ERROR: Could not connect. " . mysqli_connect_error());
+}
+// Attempt create database query execution
+$sql = "CREATE DATABASE grad_system";
+if(mysqli_query($link, $sql)){
+echo "Database created successfully";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+mysqli_close($link);
+?>
+-------------------------------------------------------
+<?php
+/* Attempt MySQL server connection. Assuming you are running MySQL
+server with default setting (user 'root' with no password) */
+$link = mysqli_connect("localhost", "root", "", "grad_system");
+// Check connection
+if($link === false){
+die("ERROR: Could not connect. " . mysqli_connect_error());
+}
+// Attempt create table query execution
+$sql = "CREATE TABLE student(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+password VARCHAR(30) NOT NULL,
+username VARCHAR(70) NOT NULL UNIQUE
+)";
+if(mysqli_query($link, $sql)){
+echo "Table created successfully.";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+$sql = "CREATE TABLE teacher(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(30) NOT NULL,
+password VARCHAR(30) NOT NULL,
+subject VARCHAR(30) NOT NULL,
+username VARCHAR(70) NOT NULL UNIQUE
+)";
+if(mysqli_query($link, $sql)){
+echo "Table created successfully.";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+$sql = "CREATE TABLE control(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(30) NOT NULL,
+password VARCHAR(30) NOT NULL,
+username VARCHAR(70) NOT NULL UNIQUE,
+mid1 INT(20),
+final1 INT(20),
+mid2 INT(20),
+final2 INT(20)
+)";
+if(mysqli_query($link, $sql)){
+echo "Table created successfully.";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+$sql = "CREATE TABLE software(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(30) NOT NULL,
+password VARCHAR(30) NOT NULL,
+username VARCHAR(70) NOT NULL UNIQUE,
+mid1 INT(20),
+final1 INT(20),
+mid2 INT(20),
+final2 INT(20)
+)";
+if(mysqli_query($link, $sql)){
+echo "Table created successfully.";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+$sql = "CREATE TABLE network(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(30) NOT NULL,
+password VARCHAR(30) NOT NULL,
+username VARCHAR(70) NOT NULL UNIQUE,
+mid1 INT(20),
+final1 INT(20),
+mid2 INT(20),
+final2 INT(20)
+)";
+if(mysqli_query($link, $sql)){
+echo "Table created successfully.";
+} else{
+echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+// Close connection
+mysqli_close($link);
+?>
+-------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+    href="style.css" />
+</head>
+<body>
+    <div class="login-page">
+        <div class="form">
+          <form class="login-form" action="home.php" method="post">
+            <h3>login page </h3>
+            <br>
+            <input type="text" placeholder="username" name="user"/>
+            <input type="password" placeholder="password" name="pass"/>
+            <input type="submit" value="login"/>
+          </form>
+        </div>
+      </div>
+</body>
+</html>
+------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div align-"center">
+<?php
+$user = $_POST["user"];
+$pass = $_POST["pass"];
+
+// Connect to the database
+$link = mysqli_connect ("localhost", "root", "", "grad_system");
+$sql = "SELECT * FROM student WHERE username='$user' AND password='$pass'";
+$student = mysqli_query ($link, $sql);
+$sql = "SELECT * FROM teacher WHERE username='$user' AND password='$pass'";
+$teacher = mysqli_query ($link, $sql);
+if (mysqli_num_rows ($student) > 0) {
+include ("student.php");
+$row = mysqli_fetch_assoc ($student);
+$username = $row [ "username"];
+viewStudent ($username, $link, True);
+//-- View Students Page
+} else if (mysqli_num_rows ($teacher) > 0) {
+include ("teacher.php");
+$row = mysqli_fetch_assoc ($teacher);
+$username = $row ["username"];
+$name = $row["name"];
+$subject = $row["subject"];
+viewTeacherPage ($username, $name, $subject, $link);
+} else {
+    echo "incorrect username or password";
+}
+?>
+</body>
+</html>
+-----------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+    href="styles.css" />
+</head>
+
+
+<?php
+function viewStudent ($username , $link, $teacher){
+    $sql = "SELECT * FROM network WHERE username='$username'";
+    $student = mysqli_query($link , $sql);
+    $row = mysqli_fetch_assoc($student);
+    $name = $row["name"];
+    $net_mid1 = $row["mid1"];
+    $net_final1 = $row["final1"];
+    $net_mid2 = $row["mid2"];
+    $net_final2 = $row["final2"];
+
+    //-- extract grades from 'software' table
+    $sql = "SELECT * FROM software WHERE username='$username'";
+    $student = mysqli_query($link , $sql);
+    $row = mysqli_fetch_assoc($student);
+    $soft_mid1 = $row["mid1"];
+    $soft_final1 = $row["final1"];
+    $soft_mid2 = $row["mid2"];
+    $soft_final2 = $row["final2"];
+
+       //-- extract grades from 'software' table
+        
+       $sql = "SELECT * FROM software WHERE username='$username'";
+    $student = mysqli_query($link , $sql);
+    $row = mysqli_fetch_assoc($student);
+
+    $con_mid1 = $row["mid1"];
+    $con_final1 = $row["final1"];
+    $con_mid2 = $row["mid2"];
+    $con_final2 = $row["final2"];
+
+    //-- welcome
+$welcome = "";
+if ($teacher) { $welcome = "Welcome"; }
+echo "<h2 id='title'>$welcome $name</h2>";
+
+echo " 
+<table id='table'>
+<tr>
+    <td>subject</td>
+    <td>Mid Term (course 1)</td>
+    <td>final (course 1)</td>
+    <td>Mid Term (course 2)</td>
+    <td>Final (course 2)</td>
+<tr>
+<tr>
+    <td>Software Design</td>
+    <td>$soft_mid1</td>
+    <td>$soft_final1</td>
+    <td>$soft_mid2</td>
+    <td>$soft_final2</td>
+<tr>
+<tr>
+<td>Control systems</td>
+<td>$con_mid1</td>
+<td>$con_final1</td>
+<td>$con_mid2</td>
+<td>$con_final2</td>
+<tr>
+<tr>
+<td>Networks</td>
+<td>$net_mid1</td>
+<td>$net_final1</td>
+<td>$net_mid2</td>
+<td>$net_final2</td>
+<tr>
+</table>
+";
+}
+?>
+--------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+    href="styles.css" />
+</head>
+
+<?php
+function viewteacherpage($username , $name, $subject, $link){
+    echo "<h2 id='title'>welcome $name</h2>";
+    echo "<a href='addnew.php'>add new student</a>";
+    //-- extract student name
+    $sql = "SELECT * FROM software";
+    $student = mysqli_query($link, $sql);
+    //--put stdent names in table
+    echo "
+    <br />
+    <caption>student name</caption>
+<table id='table'>
+    ";
+    $count = 0;
+    while($row = mysqli_fetch_assoc($student)){
+        $count +=1;
+        $student_name = $row['name'];
+        $username = $row['username'];
+        echo"
+        <tr>
+        <form action='modify.php' method='post'>
+        <input type='hidden' name='subject' value='$subject' />
+        <input type='hidden' name='username' value='$username' />
+        <input type='hidden' name='student_name' value='$student_name' />
+
+        <td>$count</td>
+        <td>$student_name</td>
+        <td><input type='submit' name='view' value='view' /></td>
+        <td><input type='submit' name='modify'  value='add/modify' /></td>
+        </from>
+        <tr>
+        ";
+
+    }
+    echo "</table>";
+} 
+?>
+-----------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+    href="styles.css" />
+</head>
+<body>
+<div align-"center">
+<?php
+$link = mysqli_connect ("localhost", "root", "","grad_system");
+//-- View Students Page
+if(isset ($_POST["view"])){
+$user_name = $_POST["username"];
+include ("student.php");
+viewStudent ($user_name, $link, False) ;
+}
+//-- View Modify Page
+if (isset ($_POST ["modify"])){
+$username = $_POST ["username"];
+$student_name = $_POST ["student_name"];
+$teacher_subject = $_POST ["subject"];
+//-- select the subject
+$subject = "";
+if ($teacher_subject=="software") { $subject = "Software Design"; }
+if ($teacher_subject=="control") { $subject = "Control systems";}
+if ($teacher_subject=="network") {$subject ="Network";}
+//-- extract grades from database
+$sql = "SELECT * FROM $teacher_subject WHERE username='$username'";
+$student = mysqli_query ($link, $sql);
+$row = mysqli_fetch_assoc ($student);
+$name = $row ["name"];
+$mid1 = $row["mid1"];
+$final1 = $row ["final1"];
+$mid2 = $row["mid2"];
+$final2 = $row["final2"];
+//-- create table for modify student grades
+echo "
+<form method='post'>
+<input type= 'hidden' name='username' value='$username' />
+<input type='hidden' nanme='subject' value= $teacher_subject' >
+<h2 id='title'>Add / Modify student grade</h2>
+<table id='table'>
+<tr>
+<td>subject</td>
+<td>student Name</td>
+<td>Mid Term (course 1)</td>
+<td>Final (course 1)</td>
+<td>Mid Term (course 2)</td>
+<td>Final (course 2)</td>
+<tr>
+<tr>
+<td>$subject</td>
+<td>$name</td>
+<td><input type='text' name='midl' value='$mid1' /></td>
+<td><input type='text' name='final1' value='$final1' /></td>
+<td><input type='text' name='mid2' value='$mid2' /></td>
+<td><input type='text' name='final2' value='$final2' /></td>
+<tr>
+<tr>
+<td colspan='6' align='center'><input type='submit' name='save'>
+</tr>
+</table>
+</form>
+";
+}
+//-- Update and save grades
+if (isset ($_POST ["save"])){
+    $username = $_POST["username"];
+    $teacher_subject = $_POST["subject"];
+    if ($_POST ["mid1"]=="") { $mid1='NULL'; } else {$mid1 = $_POST ["mid1"];}
+    if ($_POST ["final1"]=="") { $final1='NULL'; } else {$final1 = $_POST["final1"];}
+    if ($_POST ["mid2"]=="") { $mid2-'NULL'; } else {$mid2 = $_POST ["mid2"];}
+    if ($_POST ["final2"]=="") { $final2='NULL'; } else {$final2 = $_POST ["final2"];}
+    $sql = "UPDATE $teacher_subject SET
+    mid1=$mid1,
+    final1=$final1,
+    mid2=$mid2,
+    final2=$final2
+    WHERE username='$username'";
+    if (mysąli_query ($link, $sql)){
+    echo "Grades updated successfully.";
+    } else {
+     echo "ERROR: Could not able to execute $sql. " . mysqli_error ($link);
+    }
+}
+?>
+</body>
+</html>
+-------------------------------------------------------------------------------
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #4CAF50;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #43A047;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+.form .register-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #1a1a1a;
+}
+.container .info span {
+  color: #4d4d4d;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #EF3B3A;
+}
+body {
+  background: #4a4e47; /* fallback for old browsers */
+  background: rgb(117, 126, 112);
+  background: linear-gradient(90deg, rgb(114, 124, 109) 0%, rgb(134, 145, 129) 50%);
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;      
+}
+
+#table td {
+    padding: 5px;
+    border: 1px solid #000
+}
+table td{
+    padding: 5px;
+}
+----------------------------------------------------------------------------------
+body {
+    background-color: darkgrey;
+    margin: 30px;
+}
+#title {
+    background-color: #f9fccf;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+a{
+    border: 1px solid #000;
+padding: 2px;
+border-radius: 3px;
+font-weight: bold;
+}
+#table td {
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #000
+}
+table td{
+    padding: 5px;
+}
+table {
+    align-self: center;
+}
